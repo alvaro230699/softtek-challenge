@@ -1,0 +1,40 @@
+{
+  "name": "fusion-api",
+  "version": "1.0.0",
+  "description": "Serverless API for fusing SWAPI and Country data",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "serverless deploy",
+    "offline": "serverless offline",
+    "test": "jest"
+  },
+  "keywords": [
+    "SWAPI",
+    "Country API",
+    "backend",
+    "nodejs",
+    "aws",
+    "cloud"
+  ],
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.772.0",
+    "@aws-sdk/lib-dynamodb": "^3.772.0",
+    "axios": "^1.8.0",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.0",
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.7.0",
+    "serverless": "^4.0.0",
+    "serverless-esbuild": "^1.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.8.0"
+  },
+  "author": "Alvaro Neyra",
+  "license": "MIT"
+}
