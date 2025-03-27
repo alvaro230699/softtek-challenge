@@ -1,1 +1,12 @@
-// env.ts
+export const JWT_SECRET=process.env.JWT_SECRET
+export const AWS_REGION=process.env.AWS_REGION
+export const DYNAMODB_FUSION_TABLE=process.env.DYNAMODB_FUSION_TABLE
+export const DYNAMODB_FUSION_PARTITION=process.env.DYNAMODB_FUSION_PARTITION
+export const DYNAMODB_EARTH_TABLE=process.env.DYNAMODB_EARTH_TABLE
+export const DYNAMODB_CACHE_TABLE=process.env.DYNAMODB_CACHE_TABLE
+// export const SUBNET_1_ID=process.env.SUBNET_1_ID
+// export const SUBNET_2_ID=process.env.SUBNET_2_ID
+// export const SG_ID=process.env.SG_ID
+// export const REDIS_URL=process.env.REDIS_URL
+// export const REDIS_PASSWORD=process.env.REDIS_PASSWORD
+export const OPENWEATHER_API=process.env.OPENWEATHER_API

@@ -7,7 +7,14 @@
     "build": "tsc",
     "deploy": "serverless deploy",
     "offline": "serverless offline",
-    "test": "jest"
+    "test": "jest",
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "serverless deploy --stage prod",
+    "remove:dev": "serverless remove --stage dev",
+    "remove:prod": "serverless remove --stage prod",
+    "logs:historial": "serverless logs -f historial --stage dev",
+    "logs:almacenar": "serverless logs -f almacenar --stage dev",
+    "logs:fusionar": "serverless logs -f fusionar --stage dev"
   },
   "keywords": [
     "SWAPI",
@@ -22,7 +29,8 @@
     "@aws-sdk/lib-dynamodb": "^3.772.0",
     "axios": "^1.8.0",
     "dotenv": "^16.4.7",
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.0",
@@ -30,9 +38,11 @@
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "^20.0.0",
     "jest": "^29.7.0",
-    "serverless": "^4.0.0",
+    "serverless": "^3.40.0",
     "serverless-esbuild": "^1.0.0",
+    "serverless-plugin-typescript": "^2.1.5",
     "ts-jest": "^29.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.0"
   },
   "author": "Alvaro Neyra",

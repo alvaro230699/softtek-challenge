@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "79881f38-0703-454c-9625-cd5655e06376",
+		"name": "Fusion API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28367692"
+	},
+	"item": [
+		{
+			"name": "fusionar",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/fusionar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"fusionar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "almacenar",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\n    \"name\": \"Geneva\",\n    \"rotation_period\": 24,\n    \"orbital_period\": 365,\n    \"diameter\": 12742,\n    \"climate\": \"temperate\",\n    \"terrain\": \"mountains\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/almacenar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"almacenar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "historial",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/historial",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"historial"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

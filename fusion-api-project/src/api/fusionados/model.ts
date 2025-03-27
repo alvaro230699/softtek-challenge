@@ -1,6 +1,6 @@
-import {Character} from '../../integrations/types/swapi'
+import {Character} from '../../integrations/types/swapi.interface'
 export interface EnrichedCharacter extends Character {
-  matched_earth_location: string;
+  earth_location: string;
   weather: {
     temperature: string;
     description: string;

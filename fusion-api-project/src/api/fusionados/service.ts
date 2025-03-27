@@ -1,11 +1,11 @@
-import { findClosestEarthLocation,getWeather } from "./utils";
+import { findClosestEarthLocation } from "./utils";
 import { fetchSWAPICharacters } from "../../integrations/swapi.client";
-import { fetchWeatherData } from "../../../integrations/weather.client";
-import { getFromCache, setToCache } from "../../../database/cache.repository";
-import { saveFusionRecord } from "../../../database/fusion.repository";
-import { EnrichedCharacter, Fusionado } from "./model";
+import { fetchWeatherData } from "../../integrations/weather.client";
+import { getFromCache, setToCache } from "../../database/cache.repository";
+import { saveFusionRecord } from "../../database/fusion.repository";
+import { EnrichedCharacter} from "./model";
 
-export const getEnrichedData = async (): Promise<Fusionado[]> => {
+export const getEnrichedData = async (): Promise<EnrichedCharacter[]> => {
   const cacheKey = "enriched-characters-cache";
   const cached = await getFromCache(cacheKey);
   if (cached) return cached;
@@ -14,13 +14,13 @@ export const getEnrichedData = async (): Promise<Fusionado[]> => {
   const charactersWithWeather: EnrichedCharacter[] = await Promise.all(
     characters.results.map(async (character) => {
       const location = await findClosestEarthLocation(character.homeworld);
-      const weather = await getWeather(location.name);
+      const weather = await fetchWeatherData(location.name);
       return {
         name:character.name,
-        matched_earth_location: location.name,
+        earth_location: location.name,
         weather: {
-          temperature: weather.temperature,
-          description: weather.description,
+          temperature: `${weather.current.temp_c} °C`,
+          description: weather.current.condition.text,
         },
         ...character
       };

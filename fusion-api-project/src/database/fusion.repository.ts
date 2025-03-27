@@ -1,65 +1,40 @@
 import { ddb } from './dynamodb.client';
-import { PutCommand } from '@aws-sdk/lib-dynamodb';
-import { Fusionado } from '../api/fusionados/model';
+import { PutCommand,QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { EnrichedCharacter } from '../api/fusionados/model';
+import {DYNAMODB_FUSION_TABLE,DYNAMODB_FUSION_PARTITION} from '../config/env'
 
-const TABLE_NAME = 'FusionHistorial';
 
-export const saveFusionRecord = async (data: Fusionado[]): Promise<void> => {
+export const saveFusionRecord = async (data: EnrichedCharacter[]): Promise<void> => {
+  const timestamp = new Date().toISOString();
+
   const command = new PutCommand({
-    TableName: TABLE_NAME,
+    TableName: DYNAMODB_FUSION_TABLE,
     Item: {
-      id: Date.now().toString(),
-      data,
-      createdAt: new Date().toISOString()
+      PK: DYNAMODB_FUSION_PARTITION,
+      SK: timestamp,
+      data
     }
   });
+
   await ddb.send(command);
 };
 
-export const getEarthLocations=():EarthLocation[]=>{
-  return earthLocations;
-};
+export const getFusionHistorial = async (limit = 10, lastKey?: { PK: string; SK: string }) => {
+  const command = new QueryCommand({
+    TableName: DYNAMODB_FUSION_TABLE,
+    KeyConditionExpression: 'PK = :pk',
+    ExpressionAttributeValues: {
+      ':pk': DYNAMODB_FUSION_PARTITION
+    },
+    ScanIndexForward: false, // orden cronológico descendente
+    Limit: limit,
+    ExclusiveStartKey: lastKey
+  });
 
-type EarthLocation = {
-  name: string;
-  rotation_period: number; // duración día promedio (en horas)
-  orbital_period: number;  // días por año
-  diameter: number;        // diámetro en km
-  climate: string;
-  terrain: string;
-};
+  const result = await ddb.send(command);
 
-const earthLocations: EarthLocation[] = [
-  {
-    name: "Cairo",
-    rotation_period: 24,
-    orbital_period: 365,
-    diameter: 12742,
-    climate: "arid",
-    terrain: "desert"
-  },
-  {
-    name: "Reykjavik",
-    rotation_period: 24,
-    orbital_period: 365,
-    diameter: 12742,
-    climate: "frozen",
-    terrain: "volcanoes"
-  },
-  {
-    name: "Amazon Rainforest",
-    rotation_period: 24,
-    orbital_period: 365,
-    diameter: 12742,
-    climate: "tropical",
-    terrain: "jungle"
-  },
-  {
-    name: "Geneva",
-    rotation_period: 24,
-    orbital_period: 365,
-    diameter: 12742,
-    climate: "temperate",
-    terrain: "mountains"
-  }
-];
+  return {
+    items: result.Items || [],
+    nextKey: result.LastEvaluatedKey || null
+  };
+};

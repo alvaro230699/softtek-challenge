@@ -1,5 +1,5 @@
-import { getFusionadosData } from './service';
+import { getEnrichedData } from './service';
 
 export const getFusionadosController = async () => {
-  return await getFusionadosData();
+  return await getEnrichedData();
 };

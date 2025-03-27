@@ -1,1 +1,118 @@
-// serverless.yml
+service: fusionador-backend
+
+frameworkVersion: "3"
+
+useDotenv: true
+
+custom:
+  dotenv:
+    path: .${opt:stage, 'dev'}.env
+plugins:
+  - serverless-plugin-typescript
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:provider.stage}
+    JWT_SECRET: ${env:JWT_SECRET}
+    DYNAMODB_FUSION_TABLE: ${env:DYNAMODB_FUSION_TABLE}
+    DYNAMODB_FUSION_PARTITION: ${env:DYNAMODB_FUSION_PARTITION}
+    DYNAMODB_CACHE_TABLE: ${env:DYNAMODB_CACHE_TABLE}
+    DYNAMODB_EARTH_TABLE: ${env:DYNAMODB_EARTH_TABLE}
+    OPENWEATHER_API: ${env:OPENWEATHER_API}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:${env:AWS_REGION}:*:table/${env:DYNAMODB_FUSION_TABLE}
+        - arn:aws:dynamodb:${env:AWS_REGION}:*:table/${env:DYNAMODB_CACHE_TABLE}
+        - arn:aws:dynamodb:${env:AWS_REGION}:*:table/${env:DYNAMODB_EARTH_TABLE}
+
+  httpApi:
+    cors: true
+
+  # vpc: # solo si Redis está en VPC (ElastiCache)
+  #   securityGroupIds:
+  #     - sg-xxxxxxxxxxxxxxxxx # cambia por el SG correcto
+  #   subnetIds:
+  #     - subnet-xxxxxxxxxxxxxxxxx
+  #     - subnet-yyyyyyyyyyyyyyyyy
+
+functions:
+  fusionar:
+    handler: src/api/fusionados/handler.handler
+    events:
+      - httpApi:
+          path: /fusionar
+          method: get
+
+  almacenar:
+    handler: src/api/almacenar/handler.handler
+    events:
+      - httpApi:
+          path: /almacenar
+          method: post
+
+  historial:
+    handler: src/api/historial/handler.handler
+    events:
+      - httpApi:
+          path: /historial
+          method: get
+
+resources:
+  Resources:
+    FusionHistorialTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMODB_FUSION_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    EarthTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMODB_EARTH_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    CacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMODB_CACHE_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
