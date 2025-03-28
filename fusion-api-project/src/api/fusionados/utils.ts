@@ -1,10 +1,10 @@
 import {EarthLocation} from "../../database/types/earth.interface"
 import {getEarthLocations} from "../../database/earth.repository"
-import axios,{AxiosResponse} from 'axios';
 import { Planet } from "../../integrations/types/swapi.interface";
-export async function findClosestEarthLocation(homeworldUrl):Promise<EarthLocation>{
-  const resPlanet:AxiosResponse= await axios.get(homeworldUrl);
-  const planet:Planet=resPlanet.data;
+import { fetchSWAPIPlanet } from "../../integrations/swapi.client";
+
+export async function findClosestEarthLocation(homeworldUrl:string):Promise<EarthLocation>{
+  const planet:Planet=await fetchSWAPIPlanet(homeworldUrl);
   const planetRotation = parseFloat(planet.rotation_period);
   const planetOrbit = parseFloat(planet.orbital_period);
   const planetDiameter = parseFloat(planet.diameter);
@@ -13,7 +13,7 @@ export async function findClosestEarthLocation(homeworldUrl):Promise<EarthLocati
   const earthLocations=await getEarthLocations();
   if (earthLocations.length==0) throw new Error("No earth locations given")
   const candidates = earthLocations.filter(loc => loc.climate === planet.climate);
-  if(candidates.length==0) throw new Error(`Earth Location with ${planet.climate} has not been found`)
+  if(candidates.length==0) throw new Error(`Earth Location with ${planet.climate} climate has not been found`)
   let bestMatch: EarthLocation | null = null;
   let minDistance = Infinity;
 

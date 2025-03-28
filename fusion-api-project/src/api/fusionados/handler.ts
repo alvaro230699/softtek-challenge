@@ -10,7 +10,7 @@ export const handler: APIGatewayProxyHandler = withLogger(async (event,context,l
     // verifyToken(token); // Lanza error si no es válido
     logger.info("initialization...")
     const data = await getFusionadosController();
-    return buildResponse(200, data,context);
+    return buildResponse(200, {data},context);
   } catch (err: any) {
     return buildErrorResponse(err, context);
   }

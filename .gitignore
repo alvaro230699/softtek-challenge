@@ -2,3 +2,8 @@
 .env*.local
 node_modules/
 *.serverless
+tmp/
+logs/
+.*
+!.env.example
+!.env.test

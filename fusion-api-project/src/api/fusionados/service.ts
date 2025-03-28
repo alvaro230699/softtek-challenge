@@ -15,14 +15,15 @@ export const getEnrichedData = async (): Promise<EnrichedCharacter[]> => {
     characters.results.map(async (character) => {
       const location = await findClosestEarthLocation(character.homeworld);
       const weather = await fetchWeatherData(location.name);
+      const {name,...characterWithoutName}=character;
       return {
-        name:character.name,
+        name,
         earth_location: location.name,
         weather: {
           temperature: `${weather.current.temp_c} °C`,
           description: weather.current.condition.text,
         },
-        ...character
+        ...characterWithoutName
       };
     })
   );

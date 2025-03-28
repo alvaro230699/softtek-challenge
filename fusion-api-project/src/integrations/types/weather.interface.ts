@@ -38,7 +38,7 @@ export interface Weather {
     uv: number;
     gust_mph: number;
     gust_kph: number;
-    air_quality: {
+    air_quality?: {
       co: number;
       no2: number;
       o3: number;

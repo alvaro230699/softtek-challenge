@@ -1,8 +1,7 @@
-import { Url } from "url";
 export interface GetAllCharacters{
   count: number,
-  next: Url,
-  previous: Url|null,
+  next: string,
+  previous: string|null,
   results: Character[]
 }
 

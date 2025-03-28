@@ -4,24 +4,37 @@ frameworkVersion: "3"
 
 useDotenv: true
 
+plugins:
+  - serverless-dynamodb
+  - serverless-plugin-typescript
+  - serverless-offline
 custom:
   dotenv:
     path: .${opt:stage, 'dev'}.env
-plugins:
-  - serverless-plugin-typescript
-
+  dynamodb:
+    stages:
+      - test
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  serverless-offline:
+    httpPort: 3000
+    stage: test
 provider:
   name: aws
   runtime: nodejs20.x
   stage: ${opt:stage, 'dev'}
   environment:
     STAGE: ${self:provider.stage}
-    JWT_SECRET: ${env:JWT_SECRET}
+    JWT_SECRET: ${env:JWT_SECRET,''}
+    IS_OFFLINE: ${env:IS_OFFLINE,'false'}
     DYNAMODB_FUSION_TABLE: ${env:DYNAMODB_FUSION_TABLE}
     DYNAMODB_FUSION_PARTITION: ${env:DYNAMODB_FUSION_PARTITION}
     DYNAMODB_CACHE_TABLE: ${env:DYNAMODB_CACHE_TABLE}
     DYNAMODB_EARTH_TABLE: ${env:DYNAMODB_EARTH_TABLE}
-    OPENWEATHER_API: ${env:OPENWEATHER_API}
+    DYNAMODB_LOCAL_ENDPOINT: ${env:DYNAMODB_LOCAL_ENDPOINT}
+    OPENWEATHER_API: ${env:OPENWEATHER_API,''}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -49,6 +62,7 @@ provider:
 functions:
   fusionar:
     handler: src/api/fusionados/handler.handler
+    timeout: 900
     events:
       - httpApi:
           path: /fusionar
@@ -56,6 +70,7 @@ functions:
 
   almacenar:
     handler: src/api/almacenar/handler.handler
+    timeout: 900
     events:
       - httpApi:
           path: /almacenar
@@ -63,6 +78,7 @@ functions:
 
   historial:
     handler: src/api/historial/handler.handler
+    timeout: 900
     events:
       - httpApi:
           path: /historial
